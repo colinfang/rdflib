@@ -31,6 +31,9 @@ from xml.sax import xmlreader
 from rdflib import __version__
 from rdflib.term import URIRef
 from rdflib.namespace import Namespace
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 __all__ = [
     'Parser', 'InputSource', 'StringInputSource',
@@ -110,7 +113,11 @@ class URLInputSource(InputSource):
                 'application/xhtml+xml;q=0.5, */*;q=0.1')
 
         req = Request(system_id, None, myheaders)
-        file = urlopen(req)
+        try:
+            file = urlopen(req, timeout=5)
+        except Exception as e:
+            LOGGER.exception('Try to open url:{}'.format(system_id))
+            raise
         # Fix for issue 130 https://github.com/RDFLib/rdflib/issues/130
         self.url = file.geturl()    # in case redirections took place
         self.setPublicId(self.url)
