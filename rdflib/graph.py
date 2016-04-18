@@ -598,6 +598,14 @@ class Graph(Node):
 
     # Conv. methods
 
+    def copy(self):
+        g = Graph()
+        for (prefix, uri) in self.namespaces():
+            g.bind(prefix, uri)
+        for x in self:
+            g.add(x)
+        return g
+
     def set(self, triple):
         """Convenience method to update the value of object
 
